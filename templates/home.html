@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+<title>Sistema de Gestión de Datos | Inicio</title>
+{% endblock %}
+
+{% block menu %}
+<nav class="mt-2">
+  <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+    <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
+    <li class="nav-item">
+      <a href="/" class="nav-link active">
+        <i class="nav-icon fas fa-home"></i>
+        <p>
+          Inicio
+        </p>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link">
+        <i class="nav-icon fas fa-credit-card"></i>
+        <p>
+          Productos Diners
+          <i class="right fas fa-angle-left"></i>
+        </p>
+      </a>
+      <ul class="nav nav-treeview">
+        <li class="nav-item">
+          <a href="{% url 'diners:proceso' %}" class="nav-link">
+            <i class="fa fa-circle nav-icon"></i>
+            <p>Procesar Datos</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'diners:historico' %}" class="nav-link">
+            <i class="fa fa-circle nav-icon"></i>
+            <p>Consulta Histórico</p>
+          </a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link">
+        <i class="nav-icon fas fa-phone"></i>
+        <p>
+          Marcaciones SdP
+          <i class="right fas fa-angle-left"></i>
+        </p>
+      </a>
+      <ul class="nav nav-treeview">
+        <li class="nav-item">
+          <a href="{% url 'marcaciones:proceso' %}" class="nav-link">
+            <i class="fa fa-circle nav-icon"></i>
+            <p>Procesar Datos</p>
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Inicio</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item active"><a href="/">Inicio</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <img src="{% static 'dist/img/welcome.png' %}" alt="Welcome Image" class='img-responsive' style='width:100%;'>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

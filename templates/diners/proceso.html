@@ -1,0 +1,428 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+<title>Sistema de Gestión de Datos | Productos Diners | Procesar Datos</title>
+{% endblock %}
+
+{% block menu %}
+<nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
+        <li class="nav-item">
+            <a href="/" class="nav-link">
+                <i class="nav-icon fas fa-home"></i>
+                <p>
+                    Inicio
+                </p>
+            </a>
+        </li>
+        <li class="nav-item menu-open">
+            <a href="#" class="nav-link active">
+                <i class="nav-icon fas fa-credit-card"></i>
+                <p>
+                    Productos Diners
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'diners:proceso' %}" class="nav-link active">
+                        <i class="fa fa-circle nav-icon"></i>
+                        <p>Procesar Datos</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'diners:historico' %}" class="nav-link">
+                        <i class="fa fa-circle nav-icon"></i>
+                        <p>Consulta Histórico</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-phone"></i>
+                <p>
+                    Marcaciones SdP
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'marcaciones:proceso' %}" class="nav-link">
+                        <i class="fa fa-circle nav-icon"></i>
+                        <p>Procesar Datos</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Procesar Datos</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Productos Diners</a></li>
+                    <li class="breadcrumb-item active">Procesar Datos</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <!-- Card -->
+                <div class="card card-default color-palette-box">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-file-excel mr-1"></i>
+                            Archivos
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-5 col-md-3">
+                                <div class="form-group">
+                                    <label for="base_unificada">Base Unificada</label>
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="base_unificada"
+                                                accept=".xls, .xlsx">
+                                            <label class="custom-file-label" for="base_unificada">Elegir
+                                                Archivo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-sm-5 col-md-3">
+                                <div class="form-group">
+                                    <label for="base_excluido">Base Excluidos</label>
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="base_excluido"
+                                                accept=".xls, .xlsx">
+                                            <label class="custom-file-label" for="base_excluido">Elegir
+                                                Archivo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-sm-5 col-md-3">
+                                <div class="form-group" style="margin-top: 10px;">
+                                    <a class="btn btn-app bg-primary" id="btn_cargar">
+                                        <i class="fas fa-upload"></i> Cargar
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+                        <div class="col-12">
+                            <h6>
+                                <i class="icon fas fa-info mr-1"></i>
+                                Seleccione los archivos a usar durante el proceso
+                            </h6>
+                        </div>
+                        <!-- /.col-12 -->
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <div class="col-12" id="vistaprevia">
+
+            </div>
+            <div class="col-12 text-center" style="display: none;">
+                <a class="btn btn-app bg-primary" id="btn_procesar">
+                    <i class="fas fa-cogs"></i> Procesar
+                </a>
+                <a class="btn btn-app bg-primary" onclick="volver();">
+                    <i class="fas fa-undo"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<div class="modal fade" id="resultado">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Resultado</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="volver();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="body_entregable">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"  onclick="volver();">Cerrar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    $(function () {
+        bsCustomFileInput.init();
+    });
+
+    $(function () {
+        $("#btn_cargar").on("click", function () {
+            var formData = new FormData();
+            formData.append("base_unificado", $("#base_unificada")[0].files[0]);
+            formData.append("base_excluido", $("#base_excluido")[0].files[0]);
+
+            if ($("#base_unificada")[0].files.length > 0 && $("#base_excluido")[0].files.length > 0) {
+                $.ajax({
+                    url: "/diners/carga",
+                    type: "POST",
+                    dataType: "html",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    },
+                    beforeSend: function () {
+                        $.LoadingOverlay("show");
+                        $('#baseunificada_vp').empty();
+                        $('#baseexcluidos1_vp').empty();
+                        $('#baseexcluidos2_vp').empty();
+                        $('#baseexcluidos3_vp').empty();
+                    },
+                    success: (data) => {
+                        var resultado = $.parseJSON(data);
+                        $("#vistaprevia").append(resultado['html']);
+                        $('#baseunificada_vp').DataTable({
+                            "data": $.parseJSON(resultado['json_unificado']),
+                            "columns": Object.keys($.parseJSON(resultado['json_unificado'])[0]).map(function (item) {
+                                return { data: item, title: item }
+                            }),
+                            "paging": true,
+                            "lengthChange": false,
+                            "searching": false,
+                            "ordering": true,
+                            "info": true,
+                            "autoWidth": false,
+                            "responsive": true,
+                            "pageLength": 5,
+                            "language": {
+                                info: 'Mostrando pagina _PAGE_ de _PAGES_',
+                                infoEmpty: 'No hay registros disponibles',
+                                infoFiltered: '(filtrado de _MAX_ registros totales)',
+                                lengthMenu: 'Mostrando _MENU_ registros por pagina',
+                                zeroRecords: 'No encontrado - Lo siento',
+                                paginate: {
+                                    previous: 'Anterior',
+                                    next: 'Siguiente'
+                                }
+                            }
+                        });
+                        $('#baseexcluidos1_vp').DataTable({
+                            "data": $.parseJSON(resultado['json_excluido_sistema']),
+                            "columns": Object.keys($.parseJSON(resultado['json_excluido_sistema'])[0]).map(function (item) {
+                                return { data: item, title: item }
+                            }),
+                            "paging": true,
+                            "lengthChange": false,
+                            "searching": false,
+                            "ordering": true,
+                            "info": true,
+                            "autoWidth": false,
+                            "responsive": true,
+                            "pageLength": 5,
+                            "language": {
+                                info: 'Mostrando pagina _PAGE_ de _PAGES_',
+                                infoEmpty: 'No hay registros disponibles',
+                                infoFiltered: '(filtrado de _MAX_ registros totales)',
+                                lengthMenu: 'Mostrando _MENU_ registros por pagina',
+                                zeroRecords: 'No encontrado - Lo siento',
+                                paginate: {
+                                    previous: 'Anterior',
+                                    next: 'Siguiente'
+                                }
+                            }
+                        });
+                        $('#baseexcluidos2_vp').DataTable({
+                            "data": $.parseJSON(resultado['json_excluido_queja']),
+                            "columns": Object.keys($.parseJSON(resultado['json_excluido_queja'])[0]).map(function (item) {
+                                return { data: item, title: item }
+                            }),
+                            "paging": true,
+                            "lengthChange": false,
+                            "searching": false,
+                            "ordering": true,
+                            "info": true,
+                            "autoWidth": false,
+                            "responsive": true,
+                            "pageLength": 5,
+                            "language": {
+                                info: 'Mostrando pagina _PAGE_ de _PAGES_',
+                                infoEmpty: 'No hay registros disponibles',
+                                infoFiltered: '(filtrado de _MAX_ registros totales)',
+                                lengthMenu: 'Mostrando _MENU_ registros por pagina',
+                                zeroRecords: 'No encontrado - Lo siento',
+                                paginate: {
+                                    previous: 'Anterior',
+                                    next: 'Siguiente'
+                                }
+                            }
+                        });
+                        $('#baseexcluidos3_vp').DataTable({
+                            "data": $.parseJSON(resultado['json_excluido_evicertia']),
+                            "columns": Object.keys($.parseJSON(resultado['json_excluido_evicertia'])[0]).map(function (item) {
+                                return { data: item, title: item }
+                            }),
+                            "paging": true,
+                            "lengthChange": false,
+                            "searching": false,
+                            "ordering": true,
+                            "info": true,
+                            "autoWidth": false,
+                            "responsive": true,
+                            "pageLength": 5,
+                            "language": {
+                                info: 'Mostrando pagina _PAGE_ de _PAGES_',
+                                infoEmpty: 'No hay registros disponibles',
+                                infoFiltered: '(filtrado de _MAX_ registros totales)',
+                                lengthMenu: 'Mostrando _MENU_ registros por pagina',
+                                zeroRecords: 'No encontrado - Lo siento',
+                                paginate: {
+                                    previous: 'Anterior',
+                                    next: 'Siguiente'
+                                }
+                            }
+                        });
+                        $("#btn_procesar").parent().show();
+                        $("#btn_cargar").addClass("disabled");
+                        $('#base_unificada').attr('disabled', 'disabled');
+                        $('#base_excluido').attr('disabled', 'disabled');
+                        $.LoadingOverlay("hide");
+                        toastr.success('Archivos cargados correctamente.');
+                    },
+                    error: (error) => {
+                        $.LoadingOverlay("hide");
+                        toastr.error('Ocurrio un error en la carga.');
+                    }
+                });
+            } else {
+                toastr.warning('Por favor seleccione los archivos.');
+            }
+        });
+    });
+
+    $(function () {
+        $("#btn_procesar").on("click", function () {
+            var formData = new FormData();
+            formData.append("base_unificado", $("#base_unificada")[0].files[0]);
+            formData.append("base_excluido", $("#base_excluido")[0].files[0]);
+
+            if ($("#base_unificada")[0].files.length > 0 && $("#base_excluido")[0].files.length > 0) {
+                $.ajax({
+                    url: "/diners/procesa",
+                    type: "POST",
+                    dataType: "html",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    },
+                    beforeSend: function () {
+                        $.LoadingOverlay("show");
+                        $('#entregable').empty();
+                    },
+                    success: (data) => {
+                        var resultado = $.parseJSON(data);
+                        $("#body_entregable").append(resultado['html']);
+                        $('#entregable').DataTable({
+                            "destroy": true,
+                            "retrieve": true,
+                            "paging": false,
+                            "lengthChange": false,
+                            "searching": false,
+                            "ordering": false,
+                            "info": false,
+                            "autoWidth": false,
+                            "responsive": true,
+                            "pageLength": 5,
+                            "language": {
+                                info: 'Mostrando pagina _PAGE_ de _PAGES_',
+                                infoEmpty: 'No hay registros disponibles',
+                                infoFiltered: '(filtrado de _MAX_ registros totales)',
+                                lengthMenu: 'Mostrando _MENU_ registros por pagina',
+                                zeroRecords: 'No encontrado - Lo siento',
+                                paginate: {
+                                    previous: 'Anterior',
+                                    next: 'Siguiente'
+                                }
+                            }
+                        });
+                        $("#resultado").modal({backdrop: "static"});
+                        $.LoadingOverlay("hide");
+                        toastr.success('Archivos procesados correctamente.');
+                    },
+                    error: (error) => {
+                        $.LoadingOverlay("hide");
+                        toastr.error('Ocurrio un error en el proceso.');
+                    }
+                });
+            } else {
+                toastr.warning('Por favor seleccione los archivos.');
+            }
+        });
+    });
+
+   function volver() {
+        $("#vistaprevia").empty();
+        $("#btn_cargar").removeClass("disabled");
+        $('#base_unificada').removeAttr('disabled', 'disabled');
+        $('#base_excluido').removeAttr('disabled', 'disabled');
+        $('#base_unificada').val('');
+        $('#base_excluidos').val('');
+        $("#btn_procesar").parent().hide();
+    }
+</script>
+{% endblock %}
